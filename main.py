@@ -5,8 +5,17 @@ from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 import pickle
 import pandas as pd
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://127.0.0.1:5500"],  # フロントエンドのオリジン
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # モデルのロード
 Amodel = pickle.load(open("./models/Amodel.pkl", "rb"))
@@ -92,9 +101,26 @@ def parsonSelection(data):
 
 @app.post("/target/")
 def bmi_prediction(req: UserInfo):
+
+    
     data = req.dict()
+    # print(data)
     
     # 関数を呼び出して結果を取得
     result = parsonSelection(data)
     
     return result
+
+# from fastapi import FastAPI
+# from pydantic import BaseModel
+
+# app = FastAPI()
+
+
+# class User(BaseModel):
+#     name: str
+
+
+# @app.post("/")
+# def read_item(user: User):
+#     return {"I am ": user.name}
